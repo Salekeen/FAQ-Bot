@@ -5,6 +5,7 @@ from nltk.tokenize import sent_tokenize
 import pandas as pd
 import sys
 sys.path.append("E:\\ML\\FAQ-Bot\\data")
+from utils import clean
 
 
 def get_new_df_augmented(df):
@@ -12,7 +13,7 @@ def get_new_df_augmented(df):
     texts = []
     indexes = []
     for index in range(len(df)):
-        text_list = sent_tokenize(df['Answer'][index])
+        text_list = sent_tokenize(df['Question'][index])
         for text in text_list:
             texts.append(text)
             indexes.append(index)
@@ -20,6 +21,12 @@ def get_new_df_augmented(df):
     new_df['Answer'] = pd.Series(texts)
     new_df['Index'] = pd.Series(indexes)
     return new_df
+
+
+def replace_synonymns(df_aug,test_df):
+    df_aug['Answer'] = df_aug['Answer'].map(clean.get_synonyms)
+    test_df['Question'] = test_df['Question'].map(clean.get_synonyms)
+    return df_aug,test_df
 
 
 def get_embeddiings(train_df, test_df):
@@ -55,5 +62,6 @@ if __name__ == "__main__":
     test_df = pd.read_csv("./data/FAQs_test.csv")
 
     df_aug = get_new_df_augmented(df)
+    df_aug,test_df = replace_synonymns(df_aug,test_df)
     answer_embeddings, target_embeddings = get_embeddiings(df_aug, test_df)
     check_similarity(answer_embeddings, target_embeddings,df_aug,test_df,df)
