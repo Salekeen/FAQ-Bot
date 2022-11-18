@@ -10,23 +10,21 @@ from utils import clean
 
 def get_new_df_augmented(df):
     """
-    It takes a dataframe with a column called 'Question' and returns a new dataframe with a column
-    called 'Answer' and 'Index'
-    
-    The 'Answer' column is a list of sentences from the 'Question' column
+    It takes a dataframe with a column called 'Answer' and returns a new dataframe with the same column,
+    but with each sentence in a separate row.
     
     Args:
-      df: the dataframe that you want to augment
+      df: the dataframe you want to augment
     
     Returns:
-      A dataframe with the questions split into sentences and the index of the original question.
+      A dataframe with the answers split into sentences.
     """
-    
+      
     new_df = pd.DataFrame(columns=['Answer', 'Index'])
     texts = []
     indexes = []
     for index in range(len(df)):
-        text_list = sent_tokenize(df['Question'][index])
+        text_list = sent_tokenize(df['Answer'][index])
         for text in text_list:
             texts.append(text)
             indexes.append(index)
